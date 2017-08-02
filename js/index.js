@@ -1,17 +1,17 @@
 (function(){
-	'user strict';
+	'use strict';
 	var Util = (function(){
 		
 			// 存储相关
-			var prefix = 'html5_reader_';
+			var prefix = 'iReader_';
 			var StorageGetter = function(key) {
 				return localStorage.getItem(prefix + key);
-			}
+			};
 			var StorageSetter = function(key,value) {
 				return localStorage.setItem(prefix + key,value);
-			}
+			};
 
-			// 事件委托相关
+			// 跨浏览器的事件绑定
 			var addHandler = function(element, type, handler) {
 				if (element.addEventListener) {
 					element.addEventListener(type, handler, false);
@@ -25,16 +25,16 @@
 			};
 			var getEvent = function(event) {
 				return event? event:window.event;
-			}
+			};
 			var getTarget = function(event) {
 				return event.target || event.srcElement;
-			}
+			};
 			// 改变背景颜色
 			var changeBkColor = function(BkColor) {
 				initBkColor = BkColor;
 				RootContainer.css("background-color",initBkColor);
 				Util.StorageSetter("background-color",initBkColor);
-			}
+			};
 			
 			// JSONP
 			var getJSONP = function(url,callback) {
@@ -50,7 +50,7 @@
 						callback(json);
 					}
 				});
-			}
+			};
 			return {
 				StorageGetter:StorageGetter,
 				StorageSetter:StorageSetter,
@@ -59,7 +59,7 @@
 				getTarget:getTarget,
 				changeBkColor:changeBkColor,
 				getJSONP:getJSONP,
-			}
+			};
 		})();
 
 		// 常量
@@ -70,7 +70,7 @@
 			m_font_bar: $(".m-font-bar"),
 			night_day: $("#night_day"),
 			light_day: $("#light_day"),
-		}
+		};
 		var Win = $(window);
 		var Doc = $(document);
 		var readerModel;
@@ -121,7 +121,7 @@
 				}).then(function(data) {
 					UIcallback && UIcallback(data);
 				});
-			}
+			};
 			// 获得章节信息（目录）
 			var getFictionInfo = function(callback) {
 				$.get("data/chapter.json",function(data) {
@@ -133,7 +133,7 @@
 					ChapterTotal = data.chapters.length;
 					callback && callback();
 				},"json");
-			}
+			};
 
 			var getFictionInfoPromise = function() {
 				return new Promise(function(resolve,reject) {
@@ -152,7 +152,7 @@
 						}	
 					},"json");
 				});
-			}
+			};
 			
 
 			// 获得当前章节的内容
@@ -166,7 +166,7 @@
 						});
 					}
 				},"json");
-			}
+			};
 
 			var getCurChapterContentPromise = function() {
 				return new Promise(function(resolve,reject) {
@@ -183,7 +183,7 @@
 						}
 					},"json");
 				});
-			} 
+			};
 			
 			// 上一章
 			var prevChapter = function(UIcallback) {
@@ -195,18 +195,18 @@
 				getCurChapterContent(Chapter_id,UIcallback);
 				Util.StorageSetter("last_chapter_id",Chapter_id);
 				Win.scrollTop(0);
-			}
+			};
 			// 下一章
 			var nextChapter = function(UIcallback) {
 				Chapter_id = parseInt(Chapter_id,10);
 				if (Chapter_id == ChapterTotal) {
-					return
+					return;
 				}
 				Chapter_id += 1;
 				getCurChapterContent(Chapter_id,UIcallback);
 				Util.StorageSetter("last_chapter_id",Chapter_id);
 				Win.scrollTop(0);
-			}
+			};
 
 			return {
 				init:init,
@@ -214,7 +214,7 @@
 				getCurChapterContent:getCurChapterContent,
 				prevChapter:prevChapter,
 				nextChapter:nextChapter,
-			}
+			};
 
 		}
 
@@ -230,7 +230,7 @@
 			}
 			return function(data) {
 				container.html(parseChapterData(data));
-			}
+			};
 		}
 
 		function EventHanlder() {
@@ -341,7 +341,7 @@
 				readerModel.nextChapter(function(data) {
 					readerUI(data);
 				});
-			})
+			});
 		}
 
 		main(); 
